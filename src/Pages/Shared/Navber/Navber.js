@@ -6,7 +6,9 @@ const Navber = () => {
   const { user, logOut } = useContext(AuthContext);
 
   const handleLogOut = () => {
-    logOut().then().catch();
+    logOut()
+    .then(()=>{})
+    .catch(err => console.error(err));
   };
 
   const menubar = (
@@ -21,9 +23,14 @@ const Navber = () => {
         <Link to="/about">About</Link>
       </li>
       {user?.email ? (
-        <li>
-          <button onClick={handleLogOut}>Log Out</button>
-        </li>
+        <>
+          <li>
+            <Link to="/dashboard">Dashboard</Link>
+          </li>
+          <li>
+            <button onClick={handleLogOut}>Log Out</button>
+          </li>
+        </>
       ) : (
         <>
           <li>
