@@ -24,7 +24,7 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
     };
     // Todo: send data to the server and once data is saved then close the modal and display toast
     setTreatment(null)
-    console.log(booking);
+    // console.log(booking);
   };
   return (
     <>

@@ -1,24 +1,39 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthProvider";
 
 const Navber = () => {
+  const { user, logOut } = useContext(AuthContext);
+
+  const handleLogOut = () => {
+    logOut().then().catch();
+  };
+
   const menubar = (
     <>
       <li>
-        <Link to='/home'>Home</Link>
+        <Link to="/home">Home</Link>
       </li>
       <li>
-        <Link to='/appointment'>Appointment</Link>
+        <Link to="/appointment">Appointment</Link>
       </li>
       <li>
-        <Link to='/about'>About</Link>
+        <Link to="/about">About</Link>
       </li>
-      <li>
-        <Link to='/register'>Register</Link>
-      </li>
-      <li>
-        <Link to='/login'>Login</Link>
-      </li>
+      {user?.email ? (
+        <li>
+          <button onClick={handleLogOut}>Log Out</button>
+        </li>
+      ) : (
+        <>
+          <li>
+            <Link to="/register">Register</Link>
+          </li>
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+        </>
+      )}
     </>
   );
 
@@ -54,9 +69,7 @@ const Navber = () => {
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal p-0">
-          {menubar}
-        </ul>
+        <ul className="menu menu-horizontal p-0">{menubar}</ul>
       </div>
     </div>
   );
