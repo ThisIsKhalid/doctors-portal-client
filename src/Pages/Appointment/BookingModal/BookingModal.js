@@ -1,10 +1,13 @@
 import { format } from "date-fns";
-import React from "react";
+import React, { useContext } from "react";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../../context/AuthProvider";
 
-const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
+const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
   // treatment is appointment option just differant name
   const { name, slots } = treatment;
   const date = format(selectedDate, "PP");
+  const { user } = useContext(AuthContext);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -23,8 +26,24 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
       phone,
     };
     // Todo: send data to the server and once data is saved then close the modal and display toast
-    setTreatment(null)
-    // console.log(booking);
+    fetch("http://localhost:5000/bookings", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(booking),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.acknowledged) {
+          setTreatment(null);
+          toast.success("Booking confirmed");
+          refetch();
+        }
+        else{
+          toast.error(data.message)
+        }
+      });
   };
   return (
     <>
@@ -58,12 +77,16 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
             <input
               type="text"
               name="name"
+              defaultValue={user?.displayName}
+              disabled
               placeholder="Your name"
               className="input w-full input-bordered"
             />
             <input
               type="email"
               name="email"
+              defaultValue={user?.email}
+              disabled
               placeholder="Email"
               className="input w-full input-bordered"
             />
