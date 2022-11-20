@@ -1,5 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Loading from "../../Shared/Loading/Loading";
 
 const AddDoctor = () => {
   const {
@@ -8,9 +12,60 @@ const AddDoctor = () => {
     formState: { errors },
   } = useForm();
 
+  const imgHostingKey = process.env.REACT_APP_imgbb_key;
+
+  const navigate = useNavigate();
+
+  const { data: specialties, isLoading } = useQuery({
+    queryKey: ["specialty"],
+    queryFn: async () => {
+      const res = await fetch("http://localhost:5000/appointmentSpecialty");
+      const data = await res.json();
+      return data;
+    },
+  });
+
   const handleAddDoctor = (data) => {
-    console.log(data);
+    const image = data.img[0];
+    const formData = new FormData();
+    formData.append("image", image);
+    const url = `https://api.imgbb.com/1/upload?key=${imgHostingKey}`;
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((imgData) => {
+        // console.log(imgData.data.display_url);
+        if (imgData.success) {
+          const doctor = {
+            name: data.name,
+            email: data.email,
+            specialty: data.specialty,
+            image: imgData.data.display_url,
+          };
+
+          // save doctor information in the database
+          fetch("http://localhost:5000/doctors", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(doctor),
+          })
+            .then((res) => res.json())
+            .then((result) => {
+              console.log(result);
+              toast.success(`${data.name} is added successfully`);
+              navigate("/dashboard/managedoctors");
+            });
+        }
+      });
   };
+
+  if (isLoading) {
+    return <Loading></Loading>;
+  }
 
   return (
     <div className="w-96 p-7 shadow-md">
@@ -43,13 +98,30 @@ const AddDoctor = () => {
         </div>
         <div className="form-control w-full max-w-xs">
           <label className="label">
-            <span className="label-text">Speciality</span>
+            <span className="label-text">Specialty</span>
           </label>
-          <select className="select select-bordered w-full max-w-xs">
-            <option disabled selected>Pick a Speciality</option>
-            <option>Han Solo</option>
+          <select
+            {...register("specialty")}
+            className="select select-bordered w-full max-w-xs"
+          >
+            {specialties?.map((specialty) => (
+              <option key={specialty._id} value={specialty.name}>
+                {specialty.name}
+              </option>
+            ))}
+
             <option>Greedo</option>
           </select>
+        </div>
+        <div className="form-control w-full max-w-xs">
+          <label className="label">
+            <span className="label-text">Photo</span>
+          </label>
+          <input
+            type="file"
+            {...register("img", { required: true })}
+            className="input input-bordered w-full max-w-xs"
+          />
         </div>
 
         <input
