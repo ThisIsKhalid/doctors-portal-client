@@ -13,7 +13,7 @@ const Login = () => {
   } = useForm();
   const { login } = useContext(AuthContext);
   const [loginUserEmail, setLoginUserEmail] = useState("");
-  const [token] = useToken(loginUserEmail);
+  const token = useToken(loginUserEmail);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -29,7 +29,7 @@ const Login = () => {
         toast.success("Successfully login");
         // console.log(res.user);
         if(res.user){
-          setLoginUserEmail(data?.email);
+          setLoginUserEmail(res.user.email);
         }
 
         

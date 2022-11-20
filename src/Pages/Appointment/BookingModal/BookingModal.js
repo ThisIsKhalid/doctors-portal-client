@@ -17,34 +17,38 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
     const phone = form.phone.value;
     const email = form.email.value;
 
-    const booking = {
-      appointmentDate: date,
-      treatment: treatment.name,
-      patient: name,
-      slot,
-      email,
-      phone,
-    };
-    // Todo: send data to the server and once data is saved then close the modal and display toast
-    fetch("http://localhost:5000/bookings", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(booking),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.acknowledged) {
-          setTreatment(null);
-          toast.success("Booking confirmed");
-          refetch();
-        }
-        else{
-          toast.error(data.message)
-        }
-      });
+    if (email && name) {
+      const booking = {
+        appointmentDate: date,
+        treatment: treatment.name,
+        patient: name,
+        slot,
+        email,
+        phone,
+      };
+      // Todo: send data to the server and once data is saved then close the modal and display toast
+      fetch("http://localhost:5000/bookings", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(booking),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.acknowledged) {
+            setTreatment(null);
+            toast.success("Booking confirmed");
+            refetch();
+          } else {
+            toast.error(data.message);
+          }
+        });
+    } else {
+      toast.error("Please Login");
+    }
   };
+  
   return (
     <>
       <input type="checkbox" id="booking-modal" className="modal-toggle" />
@@ -77,6 +81,7 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
             <input
               type="text"
               name="name"
+              required
               defaultValue={user?.displayName}
               disabled
               placeholder="Your name"
@@ -85,6 +90,7 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
             <input
               type="email"
               name="email"
+              required
               defaultValue={user?.email}
               disabled
               placeholder="Email"

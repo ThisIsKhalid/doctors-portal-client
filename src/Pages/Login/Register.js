@@ -13,7 +13,7 @@ const Register = () => {
   } = useForm();
   const { createUser, updateUserProfile } = useContext(AuthContext);
   const [createUserEmail, setCreateUserEmail] = useState('')
-  const [token] = useToken(createUserEmail);
+  const token = useToken(createUserEmail);
   const navigate = useNavigate();
 
   if(token){
