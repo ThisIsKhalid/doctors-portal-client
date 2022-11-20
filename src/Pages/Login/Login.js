@@ -28,9 +28,11 @@ const Login = () => {
       .then((res) => {
         toast.success("Successfully login");
         // console.log(res.user);
-        setLoginUserEmail(res.user.email);
+        if(res.user){
+          setLoginUserEmail(data?.email);
+        }
 
-        e.target.reset();
+        
       })
       .catch((err) => console.error(err));
   };
