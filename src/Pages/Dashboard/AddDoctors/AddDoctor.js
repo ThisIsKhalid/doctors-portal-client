@@ -50,12 +50,13 @@ const AddDoctor = () => {
             method: "POST",
             headers: {
               "content-type": "application/json",
+              authorization: `bearer ${localStorage.getItem("accessToken")}`,
             },
             body: JSON.stringify(doctor),
           })
             .then((res) => res.json())
             .then((result) => {
-              console.log(result);
+              // console.log(result);
               toast.success(`${data.name} is added successfully`);
               navigate("/dashboard/managedoctors");
             });

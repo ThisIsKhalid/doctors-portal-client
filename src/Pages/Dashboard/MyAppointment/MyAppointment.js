@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AuthContext } from "../../../context/AuthProvider";
 
 const MyAppointment = () => {
@@ -8,7 +10,7 @@ const MyAppointment = () => {
   const url = `http://localhost:5000/bookings?email=${user?.email}`;
 
   // using react query
-  const { data: bookings = [] } = useQuery({
+  const { data: bookings = [], refetch } = useQuery({
     queryKey: ["bookings", user?.email],
     queryFn: async () => {
       const res = await fetch(url, {
@@ -20,6 +22,22 @@ const MyAppointment = () => {
       return data;
     },
   });
+
+  const handleBookingsDelete = (id) => {
+    fetch(`http://localhost:5000/bookings/${id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `bearer ${localStorage.getItem("accessToken")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.deletedCount > 0) {
+          toast.success("Deleted successfully");
+          refetch();
+        }
+      });
+  };
 
   return (
     <div>
@@ -33,6 +51,8 @@ const MyAppointment = () => {
               <th>Treatment</th>
               <th>Date</th>
               <th>Time</th>
+              <th>Payment</th>
+              <th>Cancel</th>
             </tr>
           </thead>
           <tbody>
@@ -43,6 +63,24 @@ const MyAppointment = () => {
                 <td>{booking.treatment}</td>
                 <td>{booking.appointmentDate}</td>
                 <td>{booking.slot}</td>
+                <td>
+                  {booking.price && !booking.paid && (
+                    <Link to={`/dashboard/payment/${booking._id}`}>
+                      <button className="btn btn-sm btn-primary">Pay</button>
+                    </Link>
+                  )}
+                  {booking.price && booking.paid && (
+                    <span className="text-primary">Paid</span>
+                  )}
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleBookingsDelete(booking._id)}
+                    className="btn btn-sm btn-error"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
