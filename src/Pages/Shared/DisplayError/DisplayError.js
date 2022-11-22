@@ -10,7 +10,7 @@ const DisplayError = () => {
   const handleLogOut = () => {
     logOut()
       .then(() => {
-        navigate('/login')
+        navigate("/login");
       })
       .catch((err) => console.error(err));
   };
@@ -46,18 +46,12 @@ const DisplayError = () => {
         <p className="text-3xl">
           <i>{error.statusText || error.message}</i>
         </p>
-        <h4 className="text-3xl">
-          Please{" "}
-          <Link to="/login">
-            <button
-              className="btn btn-outline btn-error"
-              onClick={handleLogOut}
-            >
-              Log Out
-            </button>
-          </Link>{" "}
-          and Log back in.
-        </h4>
+        <div className="flex gap-5">
+          <Link to='/' className="btn btn-outline btn-secondary">Home</Link>
+          <button className="btn btn-outline btn-error " onClick={handleLogOut}>
+            Log Out
+          </button>
+        </div>
       </div>
     </div>
   );

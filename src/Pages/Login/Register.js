@@ -12,12 +12,12 @@ const Register = () => {
     formState: { errors },
   } = useForm();
   const { createUser, updateUserProfile } = useContext(AuthContext);
-  const [createUserEmail, setCreateUserEmail] = useState('')
+  const [createUserEmail, setCreateUserEmail] = useState("");
   const token = useToken(createUserEmail);
   const navigate = useNavigate();
 
-  if(token){
-    navigate('/')
+  if (token) {
+    navigate("/");
   }
 
   const handleRegister = (data) => {
@@ -40,7 +40,7 @@ const Register = () => {
 
   const saveUserInDatabase = (name, email) => {
     const user = { name, email };
-    fetch("http://localhost:5000/users", {
+    fetch("https://doctors-portal-server-silk.vercel.app/users", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -51,13 +51,10 @@ const Register = () => {
       .then((data) => {
         if (data.acknowledged) {
           toast.success("Register successfull");
-          setCreateUserEmail(email)
-
+          setCreateUserEmail(email);
         }
       });
   };
-
-  
 
   return (
     <div className="h-[600px]  flex items-center justify-center">

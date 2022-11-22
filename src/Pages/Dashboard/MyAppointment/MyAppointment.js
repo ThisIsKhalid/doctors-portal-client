@@ -7,7 +7,7 @@ import { AuthContext } from "../../../context/AuthProvider";
 const MyAppointment = () => {
   const { user } = useContext(AuthContext);
 
-  const url = `http://localhost:5000/bookings?email=${user?.email}`;
+  const url = `https://doctors-portal-server-silk.vercel.app/bookings?email=${user?.email}`;
 
   // using react query
   const { data: bookings = [], refetch } = useQuery({
@@ -24,7 +24,7 @@ const MyAppointment = () => {
   });
 
   const handleBookingsDelete = (id) => {
-    fetch(`http://localhost:5000/bookings/${id}`, {
+    fetch(`https://doctors-portal-server-silk.vercel.app/bookings/${id}`, {
       method: "DELETE",
       headers: {
         authorization: `bearer ${localStorage.getItem("accessToken")}`,
